@@ -13,8 +13,7 @@ function App() {
             <PostItem />
             <PostItem />
             <PostItem />
-            <PostItem />
-            <PostItem />
+            <Counter />
         </div>
     );
 }
