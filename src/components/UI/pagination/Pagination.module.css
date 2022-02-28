@@ -1,0 +1,21 @@
+.pageWrapper {
+    margin: 30px 0px 30px 0px;
+    display: flex;
+}
+.myPage {
+    color: teal;
+    padding: 10px 13px;
+    margin: 0 5px;
+    border: 1px solid teal;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+}
+.myPage:hover {
+    background-color: rgba(0, 128, 128, 0.61);
+    color: white;
+}
+.myPageCurrent {
+    background-color: teal;
+    font-weight: 700;
+    color: white;
+}
