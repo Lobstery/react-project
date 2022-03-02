@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { usePosts } from "../hooks/usePosts";
 import { useFetching } from "../hooks/useFetching";
 import PostService from "../API/PostService";
@@ -13,6 +13,8 @@ import PostList from "../components/PostList";
 
 
 import '../styles/App.css';
+import { useObserver } from "../hooks/useObserver";
+import MySelect from "../components/UI/select/MySelect";
 
 function Posts() {
     const [posts, setPosts] = useState([]);
@@ -21,17 +23,20 @@ function Posts() {
     const [totalPages, setTotalPages] = useState(0);
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
+    const lastElement = useRef();
 
 
     const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
     const [fetchPosts, isPostLoading, postError] = useFetching(async (limit, page) => {
         const response = await PostService.getAll(limit, page);
-        setPosts(response.data);
+        setPosts([...posts, ...response.data]);
         const totalCount = response.headers['x-total-count'];
         setTotalPages(getPageCount(totalCount, limit));
     });
 
-    useEffect(() => { fetchPosts(limit, page); }, []);
+    useObserver(lastElement, page < totalPages, isPostLoading, () => { setPage(page + 1); })
+
+    useEffect(() => { fetchPosts(limit, page); }, [page, limit]);
 
     const createPost = (newPost) => {
         setPosts([...posts, newPost]);
@@ -44,7 +49,6 @@ function Posts() {
 
     const changePage = (page) => {
         setPage(page);
-        fetchPosts(limit, page);
     }
 
     return (
@@ -61,14 +65,24 @@ function Posts() {
                 postError &&
                 <h2 style={{ color: "red", textAlign: "center", marginTop: "50px" }}>Erroare ${postError}</h2>
             }
+            <MySelect value={limit} onChange={value => setLimit(value)} defaultValue="Numarul de posturi pe pagina"
+                options={[
+                    { value: 5, name: '5' },
+                    { value: 10, name: '10' },
+                    { value: 25, name: '25' },
+                    { value: -1, name: 'Tot' },
+                ]}
+            ></MySelect>
+            <PostList remove={removePost} posts={sortedAndSearchedPosts} title="Lista Cu Posturi" />
+            <div ref={lastElement} style={{ height: 15 }}></div>
             {
-                isPostLoading
-                    ?
-                    <div style={{ display: "flex", justifyContent: "center", marginTop: "50px" }}>
-                        <Loader></Loader>
-                    </div>
-                    : <PostList remove={removePost} posts={sortedAndSearchedPosts} title="Lista Cu Posturi" />
+                isPostLoading &&
+
+                <div style={{ display: "flex", justifyContent: "center", marginTop: "50px" }}>
+                    <Loader></Loader>
+                </div>
             }
+
             <Pagination totalPages={totalPages} page={page} changePage={changePage} />
         </div>
     );

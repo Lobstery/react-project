@@ -6,12 +6,17 @@ import classes from "./Navbar.module.css";
 
 const Navbar = () => {
     const { isAuth, setIsAuth } = useContext(AuthContext);
+
+    const logout = () => {
+        setIsAuth(false);
+        localStorage.removeItem("auth");
+    }
+
     return (
         <div className={classes.myNavbar}>
-            <MyButton style={{ color: "white" }} onClick={() => setIsAuth(false)}>Log out</MyButton>
+            <MyButton style={{ color: "white" }} onClick={logout}>Log out</MyButton>
             <div className={classes.myNavbarLinks}>
                 <Link className={classes.myNavbarLink} to='/about'>About</Link>
-                <Link className={classes.myNavbarLink} to='/posts'>Posts</Link>
                 <Link className={classes.myNavbarLink} to='/posts'>Posts</Link>
             </div>
         </div >
