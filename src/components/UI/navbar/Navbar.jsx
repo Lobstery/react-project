@@ -12,6 +12,7 @@ const Navbar = () => {
             <div className={classes.myNavbarLinks}>
                 <Link className={classes.myNavbarLink} to='/about'>About</Link>
                 <Link className={classes.myNavbarLink} to='/posts'>Posts</Link>
+                <Link className={classes.myNavbarLink} to='/posts'>Posts</Link>
             </div>
         </div >
     );
